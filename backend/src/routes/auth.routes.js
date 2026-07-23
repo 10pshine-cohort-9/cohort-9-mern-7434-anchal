@@ -13,7 +13,7 @@ const signupValidation = [
     .notEmpty()
     .withMessage('Name is required')
     .isLength({ min: 3 })
-    .withMessage('Name must be at least 2 characters long'),
+    .withMessage('Name must be at least 3 characters long'),
 
   body('email')
     .trim()

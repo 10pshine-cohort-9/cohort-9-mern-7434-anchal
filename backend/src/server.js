@@ -1,5 +1,5 @@
 require('dotenv').config();
-const User = require('./models/User');
+
 const app = require('./app');
 const sequelize = require('./config/database');
 
@@ -17,6 +17,7 @@ const startServer = async () => {
     });
   } catch (error) {
     console.error('Unable to connect to the database:', error.message);
+    process.exit(1);
   }
 };
 

@@ -1,11 +1,21 @@
 const jwt = require('jsonwebtoken');
 
+const getJwtSecret = () => {
+  const secret = process.env.JWT_SECRET;
+
+  if (!secret) {
+    throw new Error('JWT_SECRET is not configured');
+  }
+
+  return secret;
+};
+
 const generateToken = (userId) => {
   return jwt.sign(
     {
       userId,
     },
-    process.env.JWT_SECRET,
+    getJwtSecret(),
     {
       expiresIn: '1d',
     }
@@ -14,4 +24,4 @@ const generateToken = (userId) => {
 
 module.exports = {
   generateToken,
-};
+}; 

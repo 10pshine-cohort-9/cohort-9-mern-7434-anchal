@@ -15,17 +15,27 @@ const registerUser = async ({ name, email, password }) => {
 
   const hashedPassword = await bcrypt.hash(password, 12);
 
-  const user = await User.create({
-    name,
-    email,
-    password: hashedPassword,
-  });
+  try {
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+    });
 
-  return {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-  };
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    };
+  } catch (error) {
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      const duplicateError = new Error('Email is already registered');
+      duplicateError.statusCode = 409;
+      throw duplicateError;
+    }
+
+    throw error;
+  }
 };
 
 const loginUser = async ({ email, password }) => {
