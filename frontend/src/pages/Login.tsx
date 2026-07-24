@@ -34,6 +34,9 @@ const Login = () => {
         setError('Something went wrong. Please try again.');
       }
     }
+    finally {
+      setIsLoading(false);
+    }
   };
 
   return (

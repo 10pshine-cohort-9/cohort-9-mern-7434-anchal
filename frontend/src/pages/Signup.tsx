@@ -40,6 +40,9 @@ const Signup = () => {
         setError('Something went wrong. Please try again.');
       }
     }
+    finally {
+      setIsLoading(false);
+    }
   };
 
   return (

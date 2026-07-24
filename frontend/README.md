@@ -154,6 +154,7 @@ http://localhost:5000
 Start the development server:
 
 ```bash
+cd ../backend
 npm run dev
 ```
 
