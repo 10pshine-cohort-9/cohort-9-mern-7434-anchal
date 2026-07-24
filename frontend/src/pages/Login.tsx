@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, LockKeyhole, Mail } from 'lucide-react';
+import axios from 'axios';
 
 import { useAuth } from '../context/AuthContext';
 
@@ -23,13 +24,15 @@ const Login = () => {
     try {
       await login({ email, password });
       navigate('/dashboard');
-    } catch (error: any) {
-      setError(
-        error.response?.data?.message ||
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setError(
+          error.response?.data?.message ||
           'Unable to login. Please check your credentials.'
-      );
-    } finally {
-      setIsLoading(false);
+        );
+      } else {
+        setError('Something went wrong. Please try again.');
+      }
     }
   };
 

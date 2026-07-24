@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, LockKeyhole, Mail, User } from 'lucide-react';
+import axios from 'axios';
 
 import { registerUser } from '../services/auth.service';
 
@@ -29,13 +30,15 @@ const Signup = () => {
       });
 
       navigate('/login');
-    } catch (error: any) {
-      setError(
-        error.response?.data?.message ||
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setError(
+          error.response?.data?.message ||
           'Unable to create account. Please try again.'
-      );
-    } finally {
-      setIsLoading(false);
+        );
+      } else {
+        setError('Something went wrong. Please try again.');
+      }
     }
   };
 

@@ -44,11 +44,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       try {
         const response = await getCurrentUser();
 
-        setUser({
-          id: response.userId,
-          name: '',
-          email: '',
-        });
+        setUser(response.data);
       } catch {
         localStorage.removeItem('token');
         setUser(null);
@@ -70,12 +66,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const logout = async () => {
     try {
       await logoutApi();
+    } catch (error) {
+      console.error('Logout request failed:', error);
     } finally {
       localStorage.removeItem('token');
       setUser(null);
     }
   };
-
   return (
     <AuthContext.Provider
       value={{

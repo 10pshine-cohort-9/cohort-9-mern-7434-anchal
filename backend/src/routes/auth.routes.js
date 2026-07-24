@@ -1,6 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 
+const User = require('../models/User');
 const authController = require('../controllers/auth.controller');
 const validateRequest = require('../middlewares/validation.middleware');
 const authenticateUser = require('../middlewares/auth.middleware');
@@ -56,12 +57,30 @@ router.post(
   authController.login
 );
 
-router.get('/me', authenticateUser, (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'Authentication successful',
-    userId: req.user.id,
-  });
+router.get('/me', authenticateUser, async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.user.id, {
+      attributes: ['id', 'name', 'email'],
+    });
+
+    if (!user) {
+      const error = new Error('User not found');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Authentication successful',
+      data: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.post(

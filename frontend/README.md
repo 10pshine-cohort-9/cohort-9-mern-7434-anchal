@@ -1,32 +1,180 @@
-# React + TypeScript + Vite
+# Notes Application - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A professional React and TypeScript frontend for a full-stack notes management application.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React
+- TypeScript
+- Vite
+- React Router
+- Axios
+- Lucide React
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- User registration
+- User login
+- JWT-based authentication
+- Protected routes
+- Session restoration
+- Logout functionality
+- Responsive authentication interface
+- Professional dark-themed UI
 
-## Expanding the Oxlint configuration
+## Project Structure
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```text
+src/
+├── assets/
+├── components/
+├── context/
+│   └── AuthContext.tsx
+├── layouts/
+├── pages/
+│   ├── Dashboard.tsx
+│   ├── Login.tsx
+│   └── Signup.tsx
+├── routes/
+│   ├── AppRoutes.tsx
+│   └── ProtectedRoute.tsx
+├── services/
+│   ├── api.ts
+│   └── auth.service.ts
+├── styles/
+└── types/
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Getting Started
+
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Configure Environment Variables
+
+Create a `.env` file in the frontend root directory:
+
+```env
+VITE_API_URL=http://localhost:5000
+```
+
+### 3. Start the Development Server
+
+```bash
+npm run dev
+```
+
+The frontend will be available at:
+
+```text
+http://localhost:5173
+```
+
+## Production Build
+
+To create a production build:
+
+```bash
+npm run build
+```
+
+To preview the production build:
+
+```bash
+npm run preview
+```
+
+## Authentication Flow
+
+```text
+User Registration
+        ↓
+Backend validates input
+        ↓
+User account is created
+        ↓
+User Login
+        ↓
+Backend validates credentials
+        ↓
+JWT token is generated
+        ↓
+Token is stored on the client
+        ↓
+Protected routes become accessible
+        ↓
+User accesses the dashboard
+```
+
+## API Configuration
+
+The frontend communicates with the backend API through Axios.
+
+The API base URL is configured using:
+
+```env
+VITE_API_URL=http://localhost:5000
+```
+
+The frontend communicates with:
+
+```text
+http://localhost:5000/api
+```
+
+## Available Routes
+
+| Route | Description | Access |
+|---|---|---|
+| `/login` | User login | Public |
+| `/signup` | User registration | Public |
+| `/dashboard` | User dashboard | Protected |
+
+## Backend Requirement
+
+The backend API must be running before testing authentication features.
+
+Start the backend:
+
+```bash
+npm run dev
+```
+
+Backend server:
+
+```text
+http://localhost:5000
+```
+
+## Development
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Run the production build:
+
+```bash
+npm run build
+```
+
+Preview the production build:
+
+```bash
+npm run preview
+```
+
+## Type Safety
+
+This project uses TypeScript to improve type safety and maintainability throughout the application.
+
+## Routing
+
+React Router is used for client-side navigation and protected route handling.
+
+Unauthenticated users attempting to access protected routes are redirected to the login page.
