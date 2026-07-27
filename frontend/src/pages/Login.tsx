@@ -25,10 +25,12 @@ const Login = () => {
       await login({ email, password });
       navigate('/dashboard');
     } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
+      if (axios.isAxiosError<{ message?: unknown }>(error)) {
+        const message = error.response?.data?.message;
         setError(
-          error.response?.data?.message ||
-          'Unable to login. Please check your credentials.'
+          typeof message === 'string' && message.length > 0
+            ? message
+            : 'Unable to login. Please check your credentials.'
         );
       } else {
         setError('Something went wrong. Please try again.');
