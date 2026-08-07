@@ -12,6 +12,8 @@ const Dashboard = () => {
   const [content, setContent] = useState('');
   const [isCreateNoteOpen, setIsCreateNoteOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchNotes = async () => {
@@ -32,6 +34,9 @@ const Dashboard = () => {
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
+
+    setError('');
+    setIsSubmitting(true);
 
     try {
       if (editingNote) {
@@ -55,16 +60,19 @@ const Dashboard = () => {
         ]);
       }
 
+      setError('');
       setTitle('');
       setContent('');
       setEditingNote(null);
       setIsCreateNoteOpen(false);
-    } catch (error) {
+    } catch {
       setError(
         editingNote
           ? 'Failed to update note'
           : 'Failed to create note'
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -72,15 +80,24 @@ const Dashboard = () => {
     const confirmed = window.confirm(
       'Are you sure you want to delete this note? This action can not be undone.'
     );
-    if(!confirmed){
-      return;
-    }
+
+    if (!confirmed) return;
+
+    setError('');
+    setDeletingId(id);
+
     try {
       await deleteNote(id);
+
       setNotes((currentNotes) =>
-        currentNotes.filter((note) => note.id !== id));
-    } catch (error) {
+        currentNotes.filter((note) => note.id !== id)
+      );
+
+      setError('');
+    } catch {
       setError('Failed to delete note');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -101,6 +118,7 @@ const Dashboard = () => {
           <div className="dashboard-actions">
             <button
               className="primary-button"
+              disabled={loading}
               onClick={() => {
                 setEditingNote(null);
                 setTitle('');
@@ -168,6 +186,7 @@ const Dashboard = () => {
                   <button
                     type="button"
                     className="icon-button danger"
+                    disabled={deletingId === note.id}
                     onClick={() => handleDeleteNote(note.id)}
                   >
                     <Trash2 size={15} />
@@ -238,7 +257,11 @@ const Dashboard = () => {
                     Cancel
                   </button>
 
-                  <button type="submit" className="primary-button">
+                  <button
+                    type="submit"
+                    className="primary-button"
+                    disabled={isSubmitting}
+                  >
                     {editingNote ? 'Save Changes' : 'Add Note'}
                   </button>
                 </div>
