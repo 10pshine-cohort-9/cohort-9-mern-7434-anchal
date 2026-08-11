@@ -2,6 +2,7 @@ import { useAuth } from '../context/AuthContext';
 import { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
+import DOMPurify from 'dompurify';
 import {
   getNotes,
   createNote,
@@ -250,7 +251,7 @@ const Dashboard = () => {
                   <div
                     className="note-rich-content"
                     dangerouslySetInnerHTML={{
-                      __html: note.content,
+                      __html: DOMPurify.sanitize(note.content),
                     }}
                   />
                 </div>

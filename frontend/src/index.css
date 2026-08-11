@@ -326,8 +326,9 @@ button {
 /* Notes grid */
 
 .notes-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
   gap: 16px;
 }
 
@@ -336,15 +337,30 @@ button {
   flex-direction: column;
   justify-content: space-between;
   gap: 18px;
+
+  width: fit-content;
+  min-width: 240px;
+  max-width: 100%;
+
   padding: 22px;
+
   border: 1px solid #27272a;
   border-radius: 16px;
-  background: linear-gradient(160deg, #18181b 0%, #131316 100%);
+
+  background: linear-gradient(
+    160deg,
+    #18181b 0%,
+    #131316 100%
+  );
+
   animation: card-enter 0.35s ease both;
+
   transition:
     transform 0.2s ease,
     border-color 0.2s ease,
     box-shadow 0.2s ease;
+
+  overflow: hidden;
 }
 
 .note-card:hover {
@@ -353,31 +369,83 @@ button {
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
 }
 
+.note-card-content {
+  width: fit-content;
+  max-width: 100%;
+}
+
 .note-card-content h2 {
   margin: 0 0 10px;
+
   color: #fafafa;
   font-size: 17px;
   letter-spacing: -0.02em;
+
   overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
-.note-card-content p {
-  margin: 0;
+.note-rich-content {
+  max-width: 100%;
+
   color: #a1a1aa;
-  font-size: 14px;
   line-height: 1.6;
+
+  white-space: normal;
   overflow-wrap: anywhere;
-  display: -webkit-box;
-  -webkit-line-clamp: 5;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  word-wrap: break-word;
+  word-break: break-word;
 }
+
+/* Rich text lists */
+
+.note-rich-content ul,
+.note-rich-content ol {
+  margin: 8px 0;
+  padding-left: 24px;
+
+  max-width: 100%;
+}
+
+.note-rich-content li {
+  margin-bottom: 4px;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Rich text paragraphs */
+
+.note-rich-content p {
+  margin: 0 0 8px;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Rich text headings */
+
+.note-rich-content h1,
+.note-rich-content h2,
+.note-rich-content h3 {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Rich text links */
+
+.note-rich-content a {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Note actions */
 
 .note-actions {
   display: flex;
   gap: 8px;
   padding-top: 14px;
   border-top: 1px solid #27272a;
+  flex-wrap: wrap;
 }
 
 .icon-button {
@@ -512,8 +580,9 @@ button {
     flex: 1;
   }
 
-  .notes-list {
-    grid-template-columns: 1fr;
+  .note-card {
+    width: 100%;
+    min-width: 0;
   }
 }
 
