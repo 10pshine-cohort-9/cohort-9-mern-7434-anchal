@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
-
+@import url('https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css');
 :root {
   font-family: 'DM Sans', sans-serif;
   color: #f4f4f5;
@@ -382,7 +382,6 @@ button {
   letter-spacing: -0.02em;
 
   overflow-wrap: anywhere;
-  word-break: break-word;
 }
 
 .note-rich-content {
@@ -393,8 +392,6 @@ button {
 
   white-space: normal;
   overflow-wrap: anywhere;
-  word-wrap: break-word;
-  word-break: break-word;
 }
 
 /* Rich text lists */
@@ -410,7 +407,6 @@ button {
 .note-rich-content li {
   margin-bottom: 4px;
   overflow-wrap: anywhere;
-  word-break: break-word;
 }
 
 /* Rich text paragraphs */
@@ -418,7 +414,7 @@ button {
 .note-rich-content p {
   margin: 0 0 8px;
   overflow-wrap: anywhere;
-  word-break: break-word;
+
 }
 
 /* Rich text headings */
@@ -428,14 +424,14 @@ button {
 .note-rich-content h3 {
   max-width: 100%;
   overflow-wrap: anywhere;
-  word-break: break-word;
+
 }
 
 /* Rich text links */
 
 .note-rich-content a {
   overflow-wrap: anywhere;
-  word-break: break-word;
+
 }
 
 /* Note actions */
@@ -471,10 +467,27 @@ button {
   color: #fafafa;
 }
 
+.icon-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.icon-button:disabled:hover {
+  background: #212124;
+  border-color: #3f3f46;
+  color: #d4d4d8;
+}
+
 .icon-button.danger:hover {
   background: rgba(127, 29, 29, 0.18);
   border-color: #7f1d1d;
   color: #fca5a5;
+}
+
+.icon-button.danger:disabled:hover {
+  background: #212124;
+  border-color: #3f3f46;
+  color: #d4d4d8;
 }
 
 /* Empty state */
@@ -771,4 +784,42 @@ button {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
+.rich-editor {
+  width: 100%;
+  border: 1px solid #3f3f46;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #111113;
+  color: #fafafa;
+}
+
+.rich-editor .ql-toolbar.ql-snow {
+  border: none;
+  border-bottom: 1px solid #3f3f46;
+  background: #18181b;
+}
+
+.rich-editor .ql-container.ql-snow {
+  border: none;
+  background: #111113;
+  color: #fafafa;
+  font: inherit;
+  font-size: 14px;
+}
+
+.rich-editor .ql-editor {
+  min-height: 160px;
+  color: #fafafa;
+}
+
+.rich-editor .ql-editor.ql-blank::before {
+  color: #52525b;
+  font-style: normal;
+}
+
+.rich-editor:focus-within {
+  border-color: #a1a1aa;
+  box-shadow: 0 0 0 3px rgba(161, 161, 170, 0.12);
 }

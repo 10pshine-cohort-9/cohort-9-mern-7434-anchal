@@ -316,6 +316,7 @@ const Dashboard = () => {
                   className="modal-close"
                   onClick={closeModal}
                   disabled={isSubmitting}
+                  aria-label="Close note modal"
                 >
                   <X size={18} />
                 </button>
