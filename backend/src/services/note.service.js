@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const Note = require('../models/Note');
 
 const handleDatabaseError = (error) => {
@@ -20,16 +21,45 @@ const createNote = async ({ title, content, userId }) => {
   }
 };
 
-const getNotes = async (userId) => {
+const getNotes = async (userId, { search = '', filter = 'all' } = {}) => {
   try {
-    const notes = await Note.findAll({
-      where: {
-        userId,
-      },
-      order: [['createdAt', 'DESC']],
-    });
+    const where = {
+      userId,
+    };
 
-    return notes;
+    const normalizedSearch =
+      typeof search === 'string' ? search.trim() : '';
+
+    if (normalizedSearch) {
+      where[Op.or] = [
+        {
+          title: {
+            [Op.iLike]: `%${normalizedSearch}%`,
+          },
+        },
+        {
+          content: {
+            [Op.iLike]: `%${normalizedSearch}%`,
+          },
+        },
+      ];
+    }
+
+    let order;
+
+    if (filter === 'oldest') {
+      order = [['createdAt', 'ASC']];
+    } else {
+      order = [
+        ['isPinned', 'DESC'],
+        ['createdAt', 'DESC'],
+      ];
+    }
+
+    return await Note.findAll({
+      where,
+      order,
+    });
   } catch (error) {
     handleDatabaseError(error);
   }
@@ -95,10 +125,82 @@ const deleteNote = async (noteId, userId) => {
   }
 };
 
+const togglePinNote = async (noteId, userId) => {
+  try {
+    const note = await Note.findOne({
+      where: {
+        id: noteId,
+        userId,
+      },
+    });
+
+    if (!note) {
+      return null;
+    }
+
+    await note.update({
+      isPinned: !note.isPinned,
+    });
+
+    return note;
+  } catch (error) {
+    handleDatabaseError(error);
+  }
+};
+
+const exportNotes = async (userId) => {
+  try {
+    const notes = await Note.findAll({
+      where: {
+        userId,
+      },
+      attributes: [
+        'title',
+        'content',
+        'isPinned',
+        'createdAt',
+        'updatedAt',
+      ],
+      order: [
+        ['isPinned', 'DESC'],
+        ['createdAt', 'DESC'],
+      ],
+    });
+
+    return notes;
+  } catch (error) {
+    handleDatabaseError(error);
+  }
+};
+
+const importNotes = async (userId, notes) => {
+  try {
+    const importedNotes = [];
+
+    for (const noteData of notes) {
+      const note = await Note.create({
+        title: noteData.title,
+        content: noteData.content,
+        isPinned: noteData.isPinned ?? false,
+        userId,
+      });
+
+      importedNotes.push(note);
+    }
+
+    return importedNotes;
+  } catch (error) {
+    handleDatabaseError(error);
+  }
+};
+
 module.exports = {
   createNote,
   getNotes,
   getNoteById,
   updateNote,
   deleteNote,
+  togglePinNote,
+  exportNotes,
+  importNotes,
 };

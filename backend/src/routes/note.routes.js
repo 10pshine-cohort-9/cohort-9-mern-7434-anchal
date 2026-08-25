@@ -1,6 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 
+
 const authenticateUser = require('../middlewares/auth.middleware');
 const validateRequest = require('../middlewares/validation.middleware');
 
@@ -10,6 +11,9 @@ const {
     getNoteByIdController,
     updateNoteController,
     deleteNoteController,
+    togglePinNoteController,
+    exportNotesController,
+    importNotesController,
 } = require('../controllers/note.controller');
 
 const router = express.Router();
@@ -36,6 +40,18 @@ router.get(
     '/',
     authenticateUser,
     getNotesController
+);
+
+router.get(
+    '/export',
+    authenticateUser,
+    exportNotesController
+);
+
+router.post(
+    '/import',
+    authenticateUser,
+    importNotesController
 );
 
 router.get(
@@ -66,6 +82,12 @@ router.delete(
     '/:id',
     authenticateUser,
     deleteNoteController
+);
+
+router.patch(
+    '/:id/pin',
+    authenticateUser,
+    togglePinNoteController
 );
 
 module.exports = router;

@@ -1,13 +1,13 @@
-const{DataTypes}=require('sequelize');
-const sequelize = require('../config/database');    
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
 const Note = sequelize.define(
   'Note',
   {
-    id:{
-        type:DataTypes.UUID,
-        defaultValue:DataTypes.UUIDV4,
-        primaryKey:true
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
     },
 
     title: {
@@ -16,19 +16,25 @@ const Note = sequelize.define(
     },
 
     content: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-    },  
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
 
     userId: {
       type: DataTypes.UUID,
-      allowNull: false, 
+      allowNull: false,
     },
+
+    isPinned: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
-    {
-        tableName: 'notes',
-        timestamps: true,
-    }
-);  
+  },
+  {
+    tableName: 'notes',
+    timestamps: true,
+  }
+);
 
 module.exports = Note;
