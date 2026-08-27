@@ -1,4 +1,4 @@
-const { Note } = require('../models');
+const Note = require('../models/Note');
 
 const handleDatabaseError = (error) => {
   throw new Error(`Database operation failed: ${error.message}`, {
