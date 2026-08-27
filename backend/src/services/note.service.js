@@ -176,20 +176,25 @@ const exportNotes = async (userId) => {
 
 const importNotes = async (userId, notes) => {
   try {
-    const importedNotes = [];
+    return await sequelize.transaction(async (transaction) => {
+      const importedNotes = [];
 
-    for (const noteData of notes) {
-      const note = await Note.create({
-        title: noteData.title,
-        content: noteData.content,
-        isPinned: noteData.isPinned ?? false,
-        userId,
-      });
+      for (const noteData of notes) {
+        const note = await Note.create(
+          {
+            title: noteData.title,
+            content: noteData.content,
+            isPinned: noteData.isPinned ?? false,
+            userId,
+          },
+          { transaction }
+        );
 
-      importedNotes.push(note);
-    }
+        importedNotes.push(note);
+      }
 
-    return importedNotes;
+      return importedNotes;
+    });
   } catch (error) {
     handleDatabaseError(error);
   }
