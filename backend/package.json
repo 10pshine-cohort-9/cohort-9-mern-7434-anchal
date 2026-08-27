@@ -24,7 +24,7 @@
     "sequelize": "^6.37.8"
   },
   "devDependencies": {
-    "chai": "^6.2.2",
+    "chai": "^4.5.0",
     "mocha": "^11.7.6",
     "nodemon": "^3.1.14",
     "sinon": "^22.1.0",

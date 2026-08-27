@@ -1,5 +1,7 @@
 const noteService = require('../services/note.service');
 
+const MAX_IMPORT_NOTES = 100;
+
 const createNoteController = async (req, res, next) => {
   try {
     const { title, content } = req.body;
@@ -26,7 +28,11 @@ const getNotesController = async (req, res, next) => {
 
     const allowedFilters = ['all', 'recent', 'oldest'];
 
-    if (!allowedFilters.includes(filter)) {
+    if (
+      typeof search !== 'string' ||
+      typeof filter !== 'string' ||
+      !allowedFilters.includes(filter)
+    ) {
       return res.status(400).json({
         success: false,
         message: 'Invalid filter. Use all, recent, or oldest.',
@@ -183,7 +189,21 @@ const importNotesController = async (req, res, next) => {
       });
     }
 
+    if (notes.length > MAX_IMPORT_NOTES) {
+      return res.status(400).json({
+        success: false,
+        message: `Import cannot contain more than ${MAX_IMPORT_NOTES} notes`,
+      });
+    }
+
     for (const note of notes) {
+      if (!note || typeof note !== 'object' || Array.isArray(note)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Each note must have a valid title and content',
+        });
+      }
+
       if (
         typeof note.title !== 'string' ||
         !note.title.trim() ||

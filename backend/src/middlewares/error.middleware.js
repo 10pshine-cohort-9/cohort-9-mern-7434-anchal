@@ -22,7 +22,7 @@ const errorHandler = (error, req, res, next) => {
         : error.message || 'Request failed',
   };
 
-  if (error.details) {
+  if (statusCode < 500 && error.details) {
     response.errors = error.details;
   }
 

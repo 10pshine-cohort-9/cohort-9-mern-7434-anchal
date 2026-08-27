@@ -1,4 +1,5 @@
 const { Op } = require('sequelize');
+const sequelize = require('../config/database');
 const Note = require('../models/Note');
 
 const handleDatabaseError = (error) => {

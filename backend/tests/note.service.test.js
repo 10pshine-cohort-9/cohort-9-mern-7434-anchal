@@ -1,10 +1,12 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
-
+const { Op } = require('sequelize');
 const Note = require('../src/models/Note');
 const noteService = require('../src/services/note.service');
 
-describe('Note Service', () => {
+describe('Note Service', function () {
+  this.timeout(5000);
+
   afterEach(() => {
     sinon.restore();
   });
@@ -18,7 +20,7 @@ describe('Note Service', () => {
         userId: 'user-123',
       };
 
-      sinon.stub(Note, 'create').resolves(note);
+      const createStub = sinon.stub(Note, 'create').resolves(note);
 
       const result = await noteService.createNote({
         title: 'Test Note',
@@ -27,7 +29,7 @@ describe('Note Service', () => {
       });
 
       expect(result).to.deep.equal(note);
-      expect(Note.create.calledOnce).to.equal(true);
+      expect(createStub.calledOnce).to.equal(true);
     });
   });
 
@@ -63,36 +65,16 @@ describe('Note Service', () => {
       expect(findAllStub.calledOnce).to.equal(true);
 
       const query = findAllStub.firstCall.args[0];
-      const where = query.where;
 
-      expect(where.userId).to.equal('user-123');
+      expect(query.where.userId).to.equal('user-123');
 
-      const orSymbol = Object.getOwnPropertySymbols(where).find(
-        (symbol) => symbol.toString() === 'Symbol(or)'
-      );
+      expect(query.where[Op.or]).to.have.length(2);
 
-      expect(orSymbol).to.exist;
-      expect(where[orSymbol]).to.have.length(2);
-
-      const titleCondition = where[orSymbol][0].title;
-      const contentCondition = where[orSymbol][1].content;
-
-      const titleILikeSymbol = Object.getOwnPropertySymbols(
-        titleCondition
-      ).find((symbol) => symbol.toString() === 'Symbol(iLike)');
-
-      const contentILikeSymbol = Object.getOwnPropertySymbols(
-        contentCondition
-      ).find((symbol) => symbol.toString() === 'Symbol(iLike)');
-
-      expect(titleILikeSymbol).to.exist;
-      expect(contentILikeSymbol).to.exist;
-
-      expect(titleCondition[titleILikeSymbol]).to.equal(
+      expect(query.where[Op.or][0].title[Op.iLike]).to.equal(
         '%meeting%'
       );
 
-      expect(contentCondition[contentILikeSymbol]).to.equal(
+      expect(query.where[Op.or][1].content[Op.iLike]).to.equal(
         '%meeting%'
       );
     });
@@ -143,7 +125,6 @@ describe('Note Service', () => {
       );
 
       expect(result).to.deep.equal(note);
-
       expect(findOneStub.calledOnce).to.equal(true);
 
       const query = findOneStub.firstCall.args[0];
@@ -305,7 +286,6 @@ describe('Note Service', () => {
       const result = await noteService.exportNotes('user-123');
 
       expect(result).to.deep.equal(notes);
-
       expect(findAllStub.calledOnce).to.equal(true);
 
       const query = findAllStub.firstCall.args[0];
@@ -316,53 +296,71 @@ describe('Note Service', () => {
     });
   });
 
-  describe('importNotes', () => {
-    it('should import multiple notes for the user', async () => {
-      const createdNotes = [];
+ describe('importNotes', () => {
+  it('should import multiple notes for the user', async () => {
+    const firstNote = {
+      id: 'note-1',
+      title: 'Imported Note',
+      content: 'Imported content',
+      isPinned: false,
+      userId: 'user-123',
+    };
 
-      sinon.stub(Note, 'create').callsFake(async (noteData) => {
-        const note = {
-          id: `note-${createdNotes.length + 1}`,
-          ...noteData,
-        };
+    const secondNote = {
+      id: 'note-2',
+      title: 'Pinned Imported Note',
+      content: 'Pinned content',
+      isPinned: true,
+      userId: 'user-123',
+    };
 
-        createdNotes.push(note);
+    const createStub = sinon
+      .stub(Note, 'create')
+      .onFirstCall()
+      .resolves(firstNote)
+      .onSecondCall()
+      .resolves(secondNote);
 
-        return note;
-      });
+    const notes = [
+      {
+        title: 'Imported Note',
+        content: 'Imported content',
+        isPinned: false,
+      },
+      {
+        title: 'Pinned Imported Note',
+        content: 'Pinned content',
+        isPinned: true,
+      },
+    ];
 
-      const notes = [
-        {
-          title: 'Imported Note',
-          content: 'Imported content',
-          isPinned: false,
-        },
-        {
-          title: 'Pinned Imported Note',
-          content: 'Pinned content',
-          isPinned: true,
-        },
-      ];
+    const result = await noteService.importNotes(
+      'user-123',
+      notes
+    );
 
-      const result = await noteService.importNotes(
-        'user-123',
-        notes
-      );
+    expect(result).to.deep.equal([
+      firstNote,
+      secondNote,
+    ]);
 
-      expect(result).to.have.length(2);
+    expect(createStub.callCount).to.equal(2);
 
-      expect(result[0].title).to.equal('Imported Note');
-      expect(result[0].userId).to.equal('user-123');
-      expect(result[0].isPinned).to.equal(false);
+    expect(createStub.firstCall.args[0]).to.deep.equal({
+      title: 'Imported Note',
+      content: 'Imported content',
+      isPinned: false,
+      userId: 'user-123',
+    });
 
-      expect(result[1].title).to.equal(
-        'Pinned Imported Note'
-      );
-      expect(result[1].isPinned).to.equal(true);
-
-      expect(Note.create.callCount).to.equal(2);
+    expect(createStub.secondCall.args[0]).to.deep.equal({
+      title: 'Pinned Imported Note',
+      content: 'Pinned content',
+      isPinned: true,
+      userId: 'user-123',
     });
   });
+});
 
   describe('Error Handling', () => {
     it('should throw a database error when create fails', async () => {
