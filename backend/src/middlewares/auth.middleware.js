@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const authenticateUser = (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
+    const authHeader = req.headers?.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       const error = new Error('Authentication token is required');
@@ -38,3 +38,4 @@ const authenticateUser = (req, res, next) => {
 };
 
 module.exports = authenticateUser;
+

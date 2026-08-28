@@ -97,8 +97,6 @@ button {
   line-height: 1.6;
 }
 
-
-
 .auth-form {
   display: flex;
   flex-direction: column;
@@ -142,7 +140,7 @@ button {
 }
 
 .input-wrapper input::placeholder {
-  color: #52525b;
+  color: #a1a1aa;
 }
 
 .password-toggle {
@@ -152,7 +150,7 @@ button {
   padding: 0;
   border: none;
   background: transparent;
-  color: #71717a;
+  color: #a1a1aa;
 }
 
 .password-toggle:hover {
@@ -184,8 +182,6 @@ button {
   transform: none;
 }
 
-
-
 .error-message {
   margin-bottom: 18px;
   padding: 12px 14px;
@@ -196,11 +192,9 @@ button {
   font-size: 13px;
 }
 
-
-
 .auth-footer {
   margin: 26px 0 0;
-  color: #71717a;
+  color: #a1a1aa;
   font-size: 14px;
   text-align: center;
 }
@@ -214,7 +208,6 @@ button {
 .auth-footer a:hover {
   text-decoration: underline;
 }
-
 
 @media (max-width: 520px) {
   .auth-card {
@@ -252,7 +245,7 @@ button {
 
 .notes-subtitle {
   margin: 10px 0 0;
-  color: #71717a;
+  color: #a1a1aa;
   font-size: 14px;
 }
 
@@ -298,7 +291,7 @@ button {
   border: 1px solid #27272a;
   border-radius: 10px;
   background: #18181b;
-  color: #71717a;
+  color: #a1a1aa;
 }
 
 .search-wrapper:focus-within {
@@ -315,7 +308,7 @@ button {
 }
 
 .search-wrapper input::placeholder {
-  color: #52525b;
+  color: #a1a1aa;
 }
 
 .toolbar-actions {
@@ -341,7 +334,7 @@ button {
   border: 1px solid transparent;
   border-radius: 8px;
   background: transparent;
-  color: #71717a;
+  color: #a1a1aa;
   font-size: 13px;
   font-weight: 600;
 }
@@ -458,7 +451,7 @@ button {
   justify-content: space-between;
   padding-top: 14px;
   border-top: 1px solid #27272a;
-  color: #52525b;
+  color: #a1a1aa;
   font-size: 11px;
 }
 
@@ -517,7 +510,7 @@ button {
 
 .notes-empty p {
   margin: 8px 0 20px;
-  color: #71717a;
+  color: #a1a1aa;
   font-size: 13px;
 }
 
@@ -572,7 +565,7 @@ button {
   border: none;
   border-radius: 8px;
   background: transparent;
-  color: #71717a;
+  color: #a1a1aa;
   font-size: 24px;
 }
 
@@ -687,7 +680,7 @@ button {
   .note-editor {
     padding: 22px;
   }
-} 
+}
 
 /* ================================
    Rich Text Editor
@@ -773,6 +766,8 @@ button {
   color: #f4f4f5;
   font-size: 14px;
   line-height: 1.7;
+  scrollbar-width: thin;
+  scrollbar-color: #3f3f46 transparent;
 }
 
 .rich-editor .tiptap p {
@@ -832,18 +827,11 @@ button {
 /* Placeholder */
 
 .rich-editor .tiptap p.is-editor-empty:first-child::before {
-  color: #52525b;
+  color: #a1a1aa;
   content: 'Write your note...';
   float: left;
   height: 0;
   pointer-events: none;
-}
-
-/* Editor scrollbar */
-
-.rich-editor .tiptap {
-  scrollbar-width: thin;
-  scrollbar-color: #3f3f46 transparent;
 }
 
 /* Mobile */

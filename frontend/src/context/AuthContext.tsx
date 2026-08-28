@@ -1,7 +1,9 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
   type ReactNode,
 } from 'react';
@@ -53,17 +55,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
     };
 
-    restoreSession();
+    void restoreSession();
   }, []);
 
-  const login = async (data: LoginData) => {
+  const login = useCallback(async (data: LoginData) => {
     const response = await loginApi(data);
 
     localStorage.setItem('token', response.data.token);
     setUser(response.data.user);
-  };
+  }, []);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await logoutApi();
     } catch (error) {
@@ -72,17 +74,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       localStorage.removeItem('token');
       setUser(null);
     }
-  };
+  }, []);
+
+  const contextValue = useMemo(
+    () => ({
+      user,
+      isLoading,
+      isAuthenticated: Boolean(user),
+      login,
+      logout,
+    }),
+    [user, isLoading, login, logout]
+  );
+
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isLoading,
-        isAuthenticated: Boolean(user),
-        login,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
