@@ -2,6 +2,7 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 const { Op } = require('sequelize');
 const Note = require('../src/models/Note');
+const sequelize = require('../src/config/database');
 const noteService = require('../src/services/note.service');
 
 describe('Note Service', function () {
@@ -296,71 +297,90 @@ describe('Note Service', function () {
     });
   });
 
- describe('importNotes', () => {
-  it('should import multiple notes for the user', async () => {
-    const firstNote = {
-      id: 'note-1',
-      title: 'Imported Note',
-      content: 'Imported content',
-      isPinned: false,
-      userId: 'user-123',
-    };
-
-    const secondNote = {
-      id: 'note-2',
-      title: 'Pinned Imported Note',
-      content: 'Pinned content',
-      isPinned: true,
-      userId: 'user-123',
-    };
-
-    const createStub = sinon
-      .stub(Note, 'create')
-      .onFirstCall()
-      .resolves(firstNote)
-      .onSecondCall()
-      .resolves(secondNote);
-
-    const notes = [
-      {
+  describe('importNotes', () => {
+    it('should import multiple notes for the user', async () => {
+      const firstNote = {
+        id: 'note-1',
         title: 'Imported Note',
         content: 'Imported content',
         isPinned: false,
-      },
-      {
+        userId: 'user-123',
+      };
+
+      const secondNote = {
+        id: 'note-2',
         title: 'Pinned Imported Note',
         content: 'Pinned content',
         isPinned: true,
-      },
-    ];
+        userId: 'user-123',
+      };
 
-    const result = await noteService.importNotes(
-      'user-123',
-      notes
-    );
+      const transaction = {
+        commit: sinon.stub().resolves(),
+        rollback: sinon.stub().resolves(),
+      };
 
-    expect(result).to.deep.equal([
-      firstNote,
-      secondNote,
-    ]);
+      const transactionStub = sinon
+        .stub(sequelize, 'transaction')
+        .callsFake(async (callback) => callback(transaction));
 
-    expect(createStub.callCount).to.equal(2);
+      const createStub = sinon
+        .stub(Note, 'create')
+        .onFirstCall()
+        .resolves(firstNote)
+        .onSecondCall()
+        .resolves(secondNote);
 
-    expect(createStub.firstCall.args[0]).to.deep.equal({
-      title: 'Imported Note',
-      content: 'Imported content',
-      isPinned: false,
-      userId: 'user-123',
-    });
+      const notes = [
+        {
+          title: 'Imported Note',
+          content: 'Imported content',
+          isPinned: false,
+        },
+        {
+          title: 'Pinned Imported Note',
+          content: 'Pinned content',
+          isPinned: true,
+        },
+      ];
 
-    expect(createStub.secondCall.args[0]).to.deep.equal({
-      title: 'Pinned Imported Note',
-      content: 'Pinned content',
-      isPinned: true,
-      userId: 'user-123',
+      const result = await noteService.importNotes(
+        'user-123',
+        notes
+      );
+
+      expect(result).to.deep.equal([
+        firstNote,
+        secondNote,
+      ]);
+
+      expect(transactionStub.calledOnce).to.equal(true);
+      expect(createStub.callCount).to.equal(2);
+
+      expect(createStub.firstCall.args[0]).to.deep.equal({
+        title: 'Imported Note',
+        content: 'Imported content',
+        isPinned: false,
+        userId: 'user-123',
+      });
+
+      expect(createStub.firstCall.args[1]).to.deep.equal({
+        transaction,
+      });
+
+      expect(createStub.secondCall.args[0]).to.deep.equal({
+        title: 'Pinned Imported Note',
+        content: 'Pinned content',
+        isPinned: true,
+        userId: 'user-123',
+      });
+
+      expect(createStub.secondCall.args[1]).to.deep.equal({
+        transaction,
+      });
     });
   });
-});
+
 
   describe('Error Handling', () => {
     it('should throw a database error when create fails', async () => {
