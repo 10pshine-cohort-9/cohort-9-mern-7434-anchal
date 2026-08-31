@@ -144,7 +144,7 @@ describe('Note Service', function () {
         'user-123'
       );
 
-      expect(result).to.equal(null);
+      expect(result).to.be.null;
     });
   });
 
@@ -190,7 +190,7 @@ describe('Note Service', function () {
         }
       );
 
-      expect(result).to.equal(null);
+      expect(result).to.be.null;
     });
   });
 
@@ -220,7 +220,7 @@ describe('Note Service', function () {
         'user-123'
       );
 
-      expect(result).to.equal(null);
+      expect(result).to.be.null;
     });
   });
 
@@ -381,7 +381,6 @@ describe('Note Service', function () {
     });
   });
 
-
   describe('Error Handling', () => {
     it('should throw a database error when create fails', async () => {
       sinon
@@ -406,3 +405,4 @@ describe('Note Service', function () {
     });
   });
 });
+

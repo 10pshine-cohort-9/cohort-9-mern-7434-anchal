@@ -84,7 +84,7 @@ const Dashboard = () => {
   const handleSave = async () => {
     const plainTextContent = content
       .replace(/<[^>]*>/g, '')
-      .replace(/&nbsp;/g, ' ')
+      .replaceAll('&nbsp;', ' ')
       .trim();
 
     if (!title.trim() || !plainTextContent) {
@@ -236,6 +236,46 @@ const Dashboard = () => {
     }
   };
 
+  const getEmptyStateTitle = () => {
+    if (search) {
+      return 'No notes found';
+    }
+
+    return 'No notes yet';
+  };
+
+  const getEmptyStateMessage = () => {
+    if (search) {
+      return 'Try a different search term.';
+    }
+
+    return 'Create your first note to get started.';
+  };
+
+  const getFilterLabel = (item: Filter) => {
+    if (item === 'all') {
+      return 'All Notes';
+    }
+
+    if (item === 'recent') {
+      return 'Recent';
+    }
+
+    return 'Oldest';
+  };
+
+  const getSaveButtonLabel = () => {
+    if (saving) {
+      return 'Saving...';
+    }
+
+    if (editingNote) {
+      return 'Update Note';
+    }
+
+    return 'Create Note';
+  };
+
   return (
     <main className="notes-page">
       <header className="notes-header">
@@ -315,11 +355,7 @@ const Dashboard = () => {
             }
             onClick={() => setFilter(item)}
           >
-            {item === 'all'
-              ? 'All Notes'
-              : item === 'recent'
-                ? 'Recent'
-                : 'Oldest'}
+            {getFilterLabel(item)}
           </button>
         ))}
       </section>
@@ -338,15 +374,9 @@ const Dashboard = () => {
         <div className="notes-empty">
           <div className="empty-icon">✦</div>
 
-          <h2>
-            {search ? 'No notes found' : 'No notes yet'}
-          </h2>
+          <h2>{getEmptyStateTitle()}</h2>
 
-          <p>
-            {search
-              ? 'Try a different search term.'
-              : 'Create your first note to get started.'}
-          </p>
+          <p>{getEmptyStateMessage()}</p>
 
           {!search && (
             <button
@@ -361,9 +391,8 @@ const Dashboard = () => {
         <section className="notes-grid">
           {notes.map((note) => (
             <article
-              className={`note-card ${
-                note.isPinned ? 'pinned' : ''
-              }`}
+              className={`note-card ${note.isPinned ? 'pinned' : ''
+                }`}
               key={note.id}
             >
               <div className="note-card-top">
@@ -499,11 +528,7 @@ const Dashboard = () => {
                 onClick={handleSave}
                 disabled={saving}
               >
-                {saving
-                  ? 'Saving...'
-                  : editingNote
-                    ? 'Update Note'
-                    : 'Create Note'}
+                {getSaveButtonLabel()}
               </button>
             </div>
           </div>
@@ -514,3 +539,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
